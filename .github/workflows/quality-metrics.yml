@@ -30,6 +30,7 @@ jobs:
         run: |
           pytest tests \
             --cov=backend.quality_demo \
+            --cov=backend.diffuculty_adapter.service \
             --cov-report=term-missing \
             --cov-fail-under=80
 
@@ -37,6 +38,13 @@ jobs:
         run: |
           python scripts/check_quality_metrics.py \
             --path backend/quality_demo.py \
+            --max-complexity 15 \
+            --max-duplication 10 \
+            --max-cbo 15 \
+            --max-dit 7
+
+          python scripts/check_quality_metrics.py \
+            --path backend/diffuculty_adapter/service.py \
             --max-complexity 15 \
             --max-duplication 10 \
             --max-cbo 15 \
