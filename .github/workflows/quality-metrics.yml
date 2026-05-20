@@ -1,0 +1,43 @@
+name: Quality Metrics Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality-metrics:
+    name: Check code quality metrics
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONPATH: .
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Check test coverage >= 80%
+        run: |
+          pytest tests \
+            --cov=backend.quality_demo \
+            --cov-report=term-missing \
+            --cov-fail-under=80
+
+      - name: Check cyclomatic complexity, duplication, CBO and DIT
+        run: |
+          python scripts/check_quality_metrics.py \
+            --path backend/quality_demo.py \
+            --max-complexity 15 \
+            --max-duplication 10 \
+            --max-cbo 15 \
+            --max-dit 7
